@@ -4,7 +4,7 @@ FROM debian:bullseye
 RUN apt-get update && apt-get install -y \
 		tmux vim zsh curl wget git wl-clipboard sudo \
 		iproute2 iputils-ping net-tools dnsutils mtr traceroute bind9-dnsutils \
-		psutils apt-file procps tcpdump sysstat ethtool && \
+		psutils apt-file procps tcpdump sysstat ethtool git sudo procps && \
 		apt clean
 
 # add user efficacy38 with uid 1000 and gid 1000

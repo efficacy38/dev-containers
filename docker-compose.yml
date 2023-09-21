@@ -6,9 +6,8 @@ services:
       context: .
       dockerfile: ./base-ct.df
   dev-ct:
-    depends_on: 
-      - base-ct
     image: dev-ct:latest
     build: 
       context: .
       dockerfile: ./dev-ct.df
+    restart: unless-stopped
