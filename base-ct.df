@@ -3,7 +3,8 @@ FROM debian:bullseye
 # Install user tools
 RUN apt-get update && apt-get install -y \
 		tmux vim zsh curl wget git wl-clipboard sudo \
-		iproute2 iputils-ping net-tools dnsutils mtr traceroute bind9-dnsutils && \
+		iproute2 iputils-ping net-tools dnsutils mtr traceroute bind9-dnsutils \
+		psutils apt-file procps tcpdump sysstat ethtool && \
 		apt clean
 
 # add user efficacy38 with uid 1000 and gid 1000
