@@ -1,0 +1,14 @@
+version: '3.6'
+services:
+  base-ct:
+    image: base-ct:latest
+    build: 
+      context: .
+      dockerfile: ./base-ct.df
+  dev-ct:
+    depends_on: 
+      - base-ct
+    image: dev-ct:latest
+    build: 
+      context: .
+      dockerfile: ./dev-ct.df

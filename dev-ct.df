@@ -1,0 +1,33 @@
+FROM base-ct:latest
+
+USER root
+
+# Install poetry dependencies
+RUN apt-get update && apt-get install -y \
+		make build-essential libssl-dev zlib1g-dev libbz2-dev libreadline-dev \
+		libsqlite3-dev wget curl llvm libncurses5-dev libncursesw5-dev xz-utils \
+		tk-dev libffi-dev liblzma-dev python3-openssl git sudo python3-distutils
+
+# Install user tools
+RUN curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl" && \
+		install -o root -g root -m 0755 kubectl /usr/local/bin/kubectl
+
+# install neovim 8.3 binary from github
+RUN curl -LO https://github.com/neovim/neovim/releases/download/v0.8.3/nvim-linux64.deb && \
+		dpkg -i nvim-linux64.deb && \
+		rm nvim-linux64.deb
+
+USER efficacy38
+WORKDIR /home/efficacy38
+
+# Install poetry
+RUN curl -sSL https://install.python-poetry.org | python3 -
+
+# Install chezmoi
+RUN curl -sfL https://git.io/chezmoi | sh
+
+# Initialize chezmoi
+RUN /home/efficacy38/bin/chezmoi init https://github.com/efficacy38/chezmoi-dotfile.git && \
+		/home/efficacy38/bin/chezmoi apply
+
+ENTRYPOINT ["/usr/bin/zsh"]

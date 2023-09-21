@@ -1,0 +1,18 @@
+FROM debian:bullseye
+
+# Install user tools
+RUN apt-get update && apt-get install -y \
+		tmux vim zsh curl wget git wl-clipboard sudo \
+		iproute2 iputils-ping net-tools dnsutils mtr traceroute bind9-dnsutils && \
+		apt clean
+
+# add user efficacy38 with uid 1000 and gid 1000
+RUN groupadd -g 1000 efficacy38 && \
+		useradd -u 1000 -g efficacy38 -s /usr/bin/zsh -m efficacy38 && \
+		echo "efficacy38 ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers
+
+# Switch to user efficacy38
+USER efficacy38
+WORKDIR /home/efficacy38
+
+ENTRYPOINT ["/usr/bin/zsh"]
