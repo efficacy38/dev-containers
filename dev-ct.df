@@ -3,25 +3,37 @@ FROM base-ct:latest
 USER root
 
 # Install poetry dependencies
-RUN apt-get update && apt-get install -y \
-		make build-essential libssl-dev zlib1g-dev libbz2-dev libreadline-dev \
-		libsqlite3-dev wget curl llvm libncurses5-dev libncursesw5-dev xz-utils \
-		tk-dev libffi-dev liblzma-dev python3-openssl python3-distutils
-
-# Install user tools
-RUN curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl" && \
-		install -o root -g root -m 0755 kubectl /usr/local/bin/kubectl
+RUN apt-get update 
 
 # install neovim 8.3 binary from github
 RUN curl -LO https://github.com/neovim/neovim/releases/download/v0.8.3/nvim-linux64.deb && \
 		dpkg -i nvim-linux64.deb && \
 		rm nvim-linux64.deb
 
+# python dependencies
+RUN DEBIAN_FRONTEND=noninteractive apt-get install -y zlib1g-dev libbz2-dev libreadline-dev libsqlite3-dev llvm libncurses5-dev libncursesw5-dev xz-utils tk-dev liblzma-dev python3-openssl python3-distutils python3-poetry
+
+# ssl libraries
+RUN apt-get install -y libssl-dev libffi-dev
+
+# base dev tools
+RUN apt-get install -y man wget curl make build-essential ripgrep rsync git ssh tldr
+
+# Install user tools
+RUN curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl" && \
+		install -o root -g root -m 0755 kubectl /usr/local/bin/kubectl
+
+# Install golang
+RUN apt-get install -y golang-go
+
+# install nvm and nodejs
+RUN apt-get install -y nodejs npm 
+
+# FIXME: Stash packages(needs to archive the packages and restore them on chezmoi apply)
+RUN apt-get install -y fzf ripgrep
+
 USER efficacy38
 WORKDIR /home/efficacy38
-
-# Install poetry
-RUN curl -sSL https://install.python-poetry.org | python3 -
 
 # Install chezmoi
 RUN curl -sfL https://git.io/chezmoi | sh
@@ -29,5 +41,9 @@ RUN curl -sfL https://git.io/chezmoi | sh
 # Initialize chezmoi
 RUN /home/efficacy38/bin/chezmoi init https://github.com/efficacy38/chezmoi-dotfile.git && \
 		/home/efficacy38/bin/chezmoi apply
+
+# install nvm
+RUN	curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.38.0/install.sh | bash && \
+		/bin/bash -c "source ~/.nvm/nvm.sh && nvm install node"
 
 ENTRYPOINT ["/usr/bin/zsh"]

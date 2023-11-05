@@ -1,11 +1,17 @@
-FROM debian:bullseye
+FROM ubuntu:22.04
 
 # Install user tools
-RUN apt-get update && apt-get install -y \
-		tmux vim zsh curl wget git wl-clipboard sudo \
-		iproute2 iputils-ping net-tools dnsutils mtr traceroute bind9-dnsutils \
-		psutils apt-file procps tcpdump sysstat ethtool git sudo procps && \
-		apt clean
+RUN apt-get update
+
+# base tools
+RUN apt-get install -y psutils apt-file sudo
+# netowrk/system tools
+RUN apt-get install -y iproute2 iputils-ping net-tools dnsutils mtr traceroute bind9-dnsutils procps tcpdump sysstat ethtool 
+# dev tools
+RUN apt-get install -y tmux vim zsh curl wget git wl-clipboard git 
+
+# clean up
+RUN	apt clean
 
 # add user efficacy38 with uid 1000 and gid 1000
 RUN groupadd -g 1000 efficacy38 && \
