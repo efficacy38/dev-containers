@@ -1,13 +1,24 @@
 version: '3.6'
 services:
-  base-ct:
-    image: base-ct:latest
-    build: 
-      context: .
-      dockerfile: ./base-ct.df
   dev-ct:
     image: dev-ct:latest
     build: 
       context: .
       dockerfile: ./dev-ct.df
+    volumes:
+      - dev-ct-vol:/home/efficacy38
+      - /home/efficacy38/Nextcloud:/home/efficacy38/Nextcloud
+      - /home/efficacy38/Tmp:/home/efficacy38/Tmp
+      # pass x11 socket to container
+      - /tmp/.X11-unix:/tmp/.X11-unix
+    privileged: true
     restart: unless-stopped
+
+  base-ct:
+    image: base-ct:latest
+    build: 
+      context: .
+      dockerfile: ./base-ct.df
+
+volumes:
+  dev-ct-vol:
